@@ -1,36 +1,27 @@
 import { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-import { ArrowUpRight, CheckCircle2, AlertCircle } from "lucide-react";
-import SectionTitle from "../components/section-title"; 
+import { CheckCircle2, AlertCircle, ChevronDown } from "lucide-react";
+import { supabase } from "../lib/supabase";
+import SectionTitle from "../components/section-title";
 
-// Supabase config
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const emptyForm = { name: "", email: "", phone: "", business: "", message: "" };
+
+const fieldClass =
+    "mt-2 w-full rounded-lg border border-line bg-white px-3.5 py-3 text-ink placeholder:text-ink-soft/60 outline-none transition-[border-color,box-shadow] focus:border-wing focus:ring-3 focus:ring-wing/15";
 
 export default function GetInTouch() {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        business: "",
-        message: ""
-    });
-
+    const [formData, setFormData] = useState(emptyForm);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async () => {
-        if (!formData.name || !formData.email || !formData.phone || !formData.business || !formData.message) {
-            setSubmitStatus("error");
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (Object.values(formData).some((v) => !v.trim())) {
+            setSubmitStatus("missing");
             return;
         }
 
@@ -38,7 +29,8 @@ export default function GetInTouch() {
         setSubmitStatus(null);
 
         try {
-            // Save data to Supabase
+            if (!supabase) throw new Error("Supabase is not configured");
+
             const { error } = await supabase.from("contact_submissions").insert([
                 {
                     name: formData.name,
@@ -46,39 +38,19 @@ export default function GetInTouch() {
                     phone: formData.phone,
                     business_type: formData.business,
                     message: formData.message,
-                    submitted_at: new Date().toISOString()
-                }
+                    submitted_at: new Date().toISOString(),
+                },
             ]);
-
             if (error) throw error;
 
-            // Send email via Supabase Functions
-            const { data: funcData, error: funcError } = await supabase.functions.invoke(
-                "send-contact-email",
-                {
-                    body: JSON.stringify({ 
-                        name: formData.name,
-                        email: formData.email 
-                    }),
-                }
-            );
-
-            if (funcError) {
-                console.error("Function error:", funcError);
-                setSubmitStatus("success");
-            } else {
-                setSubmitStatus("success");
-            }
-
-            setFormData({
-                name: "",
-                email: "",
-                phone: "",
-                business: "",
-                message: ""
+            // The submission is saved even if the confirmation email fails.
+            const { error: funcError } = await supabase.functions.invoke("send-contact-email", {
+                body: JSON.stringify({ name: formData.name, email: formData.email }),
             });
+            if (funcError) console.error("Function error:", funcError);
 
-            setTimeout(() => setSubmitStatus(null), 5000);
+            setSubmitStatus("success");
+            setFormData(emptyForm);
         } catch (error) {
             console.error("Submit error:", error);
             setSubmitStatus("error");
@@ -88,119 +60,101 @@ export default function GetInTouch() {
     };
 
     return (
-        <section
-            id="contact"
-            className="flex flex-col items-center py-12 px-4 scroll-mt-24"
-        >
-            
-            <SectionTitle
-                title="Let's Build a Smarter Business Together"
-                description="Whether you're a startup, a solo founder, or a growing company — we help you move from manual work to smart systems."
-            />
-
-            <div className="grid sm:grid-cols-2 gap-5 max-w-3xl mx-auto text-slate-400 mt-10 w-full">
-                {/* Name */}
+        <section id="contact" className="mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-32">
+            <div className="grid gap-14 lg:grid-cols-[minmax(0,24rem)_1fr] lg:gap-20">
                 <div>
-                    <label className="font-medium text-slate-200">Your name</label>
-                    <input
-                        name="name"
-                        type="text"
-                        placeholder="Enter your name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full mt-2 p-3 rounded-lg bg-transparent text-slate-200 placeholder:text-slate-400 border border-slate-700 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition"
+                    <SectionTitle
+                        title="Tell us what's slowing you down"
+                        description="Describe the problem in your own words. We'll reply within one working day to set up a free consultation."
                     />
+                    <dl className="mt-10 space-y-5 text-[0.95rem]">
+                        <div>
+                            <dt className="text-ink-soft">Email</dt>
+                            <dd className="mt-0.5">
+                                <a href="mailto:wingoraventures@gmail.com" className="text-ink link-underline">
+                                    wingoraventures@gmail.com
+                                </a>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt className="text-ink-soft">Phone and WhatsApp</dt>
+                            <dd className="mt-0.5">
+                                <a href="tel:+916238912027" className="text-ink link-underline">
+                                    +91 62389 12027
+                                </a>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt className="text-ink-soft">Based in</dt>
+                            <dd className="mt-0.5 text-ink">Kerala, India. Working with clients worldwide.</dd>
+                        </div>
+                    </dl>
                 </div>
 
-                {/* Email */}
-                <div>
-                    <label className="font-medium text-slate-200">Email address</label>
-                    <input
-                        name="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full mt-2 p-3 rounded-lg bg-transparent text-slate-200 placeholder:text-slate-400 border border-slate-700 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition"
-                    />
-                </div>
-
-                {/* Phone */}
-                <div>
-                    <label className="font-medium text-slate-200">Phone number</label>
-                    <input
-                        name="phone"
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full mt-2 p-3 rounded-lg bg-transparent text-slate-200 placeholder:text-slate-400 border border-slate-700 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition"
-                    />
-                </div>
-
-                {/* Business */}
-                <div>
-                    <label className="font-medium text-slate-200">Business type</label>
-                    <div className="relative">
-                        <select
-                            name="business"
-                            value={formData.business}
+                <form onSubmit={handleSubmit} noValidate className="grid gap-5 rounded-2xl border border-line bg-white p-6 sm:grid-cols-2 md:p-8">
+                    <label className="text-[0.95rem] font-medium text-ink">
+                        Name
+                        <input name="name" type="text" autoComplete="name" value={formData.name} onChange={handleChange} className={fieldClass} />
+                    </label>
+                    <label className="text-[0.95rem] font-medium text-ink">
+                        Email
+                        <input name="email" type="email" autoComplete="email" value={formData.email} onChange={handleChange} className={fieldClass} />
+                    </label>
+                    <label className="text-[0.95rem] font-medium text-ink">
+                        Phone
+                        <input name="phone" type="tel" autoComplete="tel" value={formData.phone} onChange={handleChange} className={fieldClass} />
+                    </label>
+                    <label className="text-[0.95rem] font-medium text-ink">
+                        Type of business
+                        <span className="relative block">
+                            <select name="business" value={formData.business} onChange={handleChange} className={`${fieldClass} appearance-none pr-10`}>
+                                <option value="">Choose one</option>
+                                <option value="startup">Startup</option>
+                                <option value="small-business">Small business</option>
+                                <option value="growing-company">Growing company</option>
+                                <option value="enterprise">Enterprise</option>
+                                <option value="solo-founder">Solo founder</option>
+                            </select>
+                            <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 mt-1 size-4 -translate-y-1/2 text-ink-soft" />
+                        </span>
+                    </label>
+                    <label className="text-[0.95rem] font-medium text-ink sm:col-span-2">
+                        What do you need help with?
+                        <textarea
+                            name="message"
+                            rows={5}
+                            placeholder="For example: we miss WhatsApp enquiries after 7 pm and lose bookings."
+                            value={formData.message}
                             onChange={handleChange}
-                            className="w-full mt-2 p-3 pr-10 rounded-lg bg-transparent text-slate-200 placeholder:text-slate-400 border border-slate-700 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition appearance-none"
+                            className={`${fieldClass} resize-none`}
+                        />
+                    </label>
+
+                    <div className="flex flex-wrap items-center gap-4 sm:col-span-2" aria-live="polite">
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="inline-flex h-12 items-center rounded-lg bg-wing px-6 font-medium text-white transition-colors hover:bg-wing-deep disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            <option value="">Select your business type</option>
-                            <option value="startup">Startup</option>
-                            <option value="small-business">Small Business</option>
-                            <option value="growing-company">Growing Company</option>
-                            <option value="enterprise">Enterprise</option>
-                            <option value="solo-founder">Solo Founder</option>
-                        </select>
-
-                        {/* Dropdown arrow */}
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                        </svg>
+                            {isSubmitting ? "Sending message…" : "Send message"}
+                        </button>
+                        {submitStatus === "success" && (
+                            <p className="flex items-center gap-2 text-[0.95rem] text-emerald-700">
+                                <CheckCircle2 className="size-5" /> Message sent. We'll reply within one working day.
+                            </p>
+                        )}
+                        {submitStatus === "missing" && (
+                            <p className="flex items-center gap-2 text-[0.95rem] text-ascent">
+                                <AlertCircle className="size-5" /> Fill in every field so we can get back to you.
+                            </p>
+                        )}
+                        {submitStatus === "error" && (
+                            <p className="flex items-center gap-2 text-[0.95rem] text-ascent">
+                                <AlertCircle className="size-5" /> Message not sent. Email us at wingoraventures@gmail.com instead.
+                            </p>
+                        )}
                     </div>
-                </div>
-
-                {/* Message */}
-                <div className="sm:col-span-2">
-                    <label className="font-medium text-slate-200">Tell us about your project</label>
-                    <textarea
-                        name="message"
-                        rows={6}
-                        placeholder="Describe your business challenges or what you need help with..."
-                        value={formData.message}
-                        onChange={handleChange}
-                        className="w-full mt-2 p-3 rounded-lg bg-transparent text-slate-200 placeholder:text-slate-400 border border-slate-700 resize-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition"
-                    />
-                </div>
-
-                {/* Success */}
-                {submitStatus === "success" && (
-                    <div className="sm:col-span-2 flex items-center gap-2 text-green-500 bg-green-500/10 border border-green-500/20 rounded-lg p-4">
-                        <CheckCircle2 className="size-5" />
-                        <span>Thank you! We will get back to you soon.</span>
-                    </div>
-                )}
-
-                {/* Error */}
-                {submitStatus === "error" && (
-                    <div className="sm:col-span-2 flex items-center gap-2 text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-                        <AlertCircle className="size-5" />
-                        <span>Please fill in all required fields and try again.</span>
-                    </div>
-                )}
-
-                {/* Submit */}
-                <button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="w-max flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {isSubmitting ? "Sending..." : "Send Message"}
-                    <ArrowUpRight className="size-4.5" />
-                </button>
+                </form>
             </div>
         </section>
     );

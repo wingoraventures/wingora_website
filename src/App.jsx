@@ -1,37 +1,34 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import GetInTouch from "./sections/get-in-touch";
-import OurTestimonials from "./sections/our-testimonials";
-import SubscribeNewsletter from "./sections/subscribe-newsletter";
-import TrustedCompanies from "./sections/trusted-companies";
 import Footer from "./components/footer";
 import LenisScroll from "./components/lenis-scroll";
 import Navbar from "./components/navbar";
-import AboutOurApps from "./sections/about-our-apps";
 import HeroSection from "./sections/hero-section";
-import OurLatestCreation from "./sections/our-latest-creation";
-import OurProcess from "./sections/we-work";
+import Services from "./sections/services";
+import SelectedWork from "./sections/selected-work";
+import Industries from "./sections/industries";
+import Process from "./sections/process";
+import GetInTouch from "./sections/get-in-touch";
 
-import Login from './admin/Login'
-import Dashboard from './admin/Dashboard'
 import RequireAuth from './admin/RequireAuth'
 import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
 
+// Admin screens load on demand so the public site never pulls in their Supabase client.
+const Login = lazy(() => import('./admin/Login'))
+const Dashboard = lazy(() => import('./admin/Dashboard'))
 
 function HomePage() {
     return (
         <>
             <Navbar />
-            <main className="px-6 md:px-16 lg:px-24 xl:px-32">
+            <main>
                 <HeroSection />
-                <OurLatestCreation />
-                <AboutOurApps />
-                <OurTestimonials /> 
-                
-                <OurProcess />
-                <TrustedCompanies />
+                <Services />
+                <SelectedWork />
+                <Industries />
+                <Process />
                 <GetInTouch />
-                <SubscribeNewsletter />
             </main>
             <Footer />
         </>
@@ -44,8 +41,8 @@ export default function App() {
             <LenisScroll />
             <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/admin" element={<Login />} />
-                <Route path="/admin/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+                <Route path="/admin" element={<Suspense fallback={null}><Login /></Suspense>} />
+                <Route path="/admin/dashboard" element={<RequireAuth><Suspense fallback={null}><Dashboard /></Suspense></RequireAuth>} />
                 <Route path="/projects" element={<ProjectsPage />} />
                 <Route path="/projects/:id" element={<ProjectDetailPage />} />
             </Routes>

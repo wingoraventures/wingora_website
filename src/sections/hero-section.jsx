@@ -1,75 +1,55 @@
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import TiltedImage from "../components/tilt-image";
+import GridField from "../components/grid-field";
+import AgentTrace from "../components/agent-trace";
+
+const rise = (delay) => ({
+    initial: { opacity: 0, y: 14 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] },
+});
 
 export default function HeroSection() {
     return (
-        <section className="flex flex-col items-center -mt-10 pt-10 md:-mt-18 md:pt-0" id="home">
-            <motion.svg className="absolute -z-10 w-full -mt-40 md:mt-0" width="1440" height="676" viewBox="0 0 1440 676" fill="none" xmlns="http://www.w3.org/2000/svg"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-            >
-                <rect x="-92" y="-948" width="1624" height="1624" rx="812" fill="url(#a)" />
-                <defs>
-                    <radialGradient id="a" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="rotate(90 428 292)scale(812)">
-                        <stop offset=".63" stopColor="#372AAC" stopOpacity="0" />
-                        <stop offset="1" stopColor="#372AAC" />
-                    </radialGradient>
-                </defs>
-            </motion.svg>
+        <section id="home" className="relative -mt-16 overflow-hidden pt-16">
+            <GridField />
 
-            {/* ✅ Reduced top margin on mobile: mt-28 → md:mt-48 */}
-            <motion.a href="#contact" className="flex items-center mt-28 md:mt-48 gap-2 border border-slate-600 text-gray-50 rounded-full px-4 py-2 hover:bg-white/5 transition"
-                initial={{ y: -20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-            >
-                <div className="size-2.5 bg-green-500 rounded-full animate-pulse" />
-                <span>Your first step toward a better space</span>
-            </motion.a>
+            <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 pb-24 pt-16 md:px-8 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:gap-16 lg:pb-32">
+                <div>
+                    <motion.h1
+                        {...rise(0.05)}
+                        className="text-[2.6rem] leading-[1.05] font-semibold tracking-[-0.03em] text-ink sm:text-6xl lg:text-[4.25rem]"
+                    >
+                        AI that answers your customers and does the busywork.
+                    </motion.h1>
 
-            {/* ✅ Tighter heading size/line-height on mobile */}
-            <motion.h1 className="text-center text-4xl leading-[52px] md:text-6xl md:leading-[70px] mt-4 font-semibold max-w-3xl px-4"
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 240, damping: 70, mass: 1 }}
-            >
-                Smart AI Solutions for Modern Businesses
-            </motion.h1>
+                    <motion.p {...rise(0.15)} className="mt-6 max-w-[34rem] text-lg leading-relaxed text-ink-soft">
+                        Wingora Ventures is an AI engineering studio in Kerala. We build chatbots, voice agents, and
+                        workflow automation for clinics, retailers, real estate teams, and growing companies, and we
+                        keep them running after launch.
+                    </motion.p>
 
-            {/* ✅ Slightly tighter paragraph on mobile */}
-            <motion.p className="text-center text-sm md:text-base max-w-2xl mt-3 md:mt-4 px-4 text-slate-300"
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-            >
-                We help businesses grow smarter by combining AI automation, intelligent chatbots, powerful websites, and performance-driven digital marketing — all designed to save time, reduce cost, and scale faster.
-            </motion.p>
+                    <motion.div {...rise(0.25)} className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
+                        <a
+                            href="#contact"
+                            className="inline-flex h-12 items-center rounded-lg bg-wing px-6 font-medium text-white transition-colors hover:bg-wing-deep"
+                        >
+                            Book a free consultation
+                        </a>
+                        <Link to="/projects" className="font-medium text-ink link-underline">
+                            See 20 projects we've shipped
+                        </Link>
+                    </motion.div>
+                </div>
 
-            {/* ✅ Reduced top margin on mobile: mt-6 → md:mt-8 */}
-            <motion.div className="flex items-center gap-4 mt-6 md:mt-8"
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-            >
-                <Link
-                    to="/projects"
-                    className="group relative flex items-center gap-2 overflow-hidden rounded-lg px-7 h-11 bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition-all duration-300 text-white font-medium"
+                <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 >
-                    <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-12 pointer-events-none" />
-                    <span>View Our Work</span>
-                    <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform duration-300" />
-                </Link>
-            </motion.div>
-
-            <TiltedImage />
+                    <AgentTrace />
+                </motion.div>
+            </div>
         </section>
     );
 }

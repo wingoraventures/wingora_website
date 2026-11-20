@@ -1,68 +1,103 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MenuIcon, XIcon } from "lucide-react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+
+const navlinks = [
+    { href: "/#services", text: "Services" },
+    { href: "/#work", text: "Work" },
+    { href: "/#process", text: "Process" },
+    { href: "/#contact", text: "Contact" },
+];
+
+export function Logo() {
+    return (
+        <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="Wingora Ventures home">
+            {/* Show only the wing mark from the transparent logo; its white wordmark is cropped off. */}
+            <span className="block h-8 w-[43px] overflow-hidden">
+                <img
+                    src="/assets/Screenshot_2025-12-30_135254-removebg-preview.png"
+                    alt=""
+                    width={99}
+                    height={32}
+                    className="h-8 w-auto max-w-none"
+                />
+            </span>
+            <span className="text-[1.05rem] font-semibold tracking-tight text-ink">Wingora Ventures</span>
+        </Link>
+    );
+}
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const navlinks = [
-        {
-            href: "#services",
-            text: "Services",
-        },
-        {
-            href: "#about",
-            text: "About",
-        },
-        {
-            href: "#why-us",
-            text: "Why Us",
-        },
-        {
-            href: "#contact",
-            text: "Contact",
-        },
-    ];
-    return (
-        <>
-            <motion.nav className="sticky top-0 z-50 flex items-center justify-between w-full h-20 px-6 md:px-16 lg:px-24 xl:px-32 backdrop-blur"
-                initial={{ y: -100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
-            >
-                <a href="#home">
-                    <img className="h-12 md:h-14 w-auto" src="/assets/Screenshot_2025-12-30_135254-removebg-preview.png" width={180} height={56} alt="Wingora Ventures Logo" />
-                </a>
+    const [scrolled, setScrolled] = useState(false);
+    const { pathname } = useLocation();
+    // On the home page use bare hashes so Lenis scrolls smoothly; elsewhere load the home page first.
+    const to = (href) => (pathname === "/" ? href.slice(1) : href);
 
-                <div className="hidden lg:flex items-center gap-8 transition duration-500">
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 8);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
+    useEffect(() => setIsMenuOpen(false), [pathname]);
+
+    return (
+        <header
+            className={`sticky top-0 z-50 transition-[background-color,border-color] duration-300 border-b ${
+                scrolled || isMenuOpen ? "bg-paper/85 backdrop-blur-md border-line" : "bg-transparent border-transparent"
+            }`}
+        >
+            <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
+                <Logo />
+
+                <div className="hidden md:flex items-center gap-8 text-[0.95rem] text-ink-soft">
                     {navlinks.map((link) => (
-                        <a key={link.href} href={link.href} className="hover:text-slate-300 transition text-white">
+                        <a key={link.href} href={to(link.href)} className="hover:text-ink transition-colors">
                             {link.text}
                         </a>
                     ))}
                 </div>
 
-                <div className="hidden lg:flex items-center gap-3">
-                    
-                    <a href="#contact" className="hover:bg-slate-300/20 transition px-6 py-2 border border-slate-400 rounded-md active:scale-95 text-white">
-                        Book Consultation
+                <a
+                    href={to("/#contact")}
+                    className="hidden md:inline-flex items-center h-10 px-4 rounded-lg bg-ink text-paper text-[0.95rem] font-medium hover:bg-wing-deep transition-colors"
+                >
+                    Book a consultation
+                </a>
+
+                <button
+                    onClick={() => setIsMenuOpen((open) => !open)}
+                    className="md:hidden -mr-2 p-2 text-ink"
+                    aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                    aria-expanded={isMenuOpen}
+                >
+                    {isMenuOpen ? <XIcon className="size-6" /> : <MenuIcon className="size-6" />}
+                </button>
+            </nav>
+
+            {isMenuOpen && (
+                <div className="md:hidden border-t border-line px-5 pb-6 pt-2">
+                    {navlinks.map((link) => (
+                        <a
+                            key={link.href}
+                            href={to(link.href)}
+                            onClick={() => setIsMenuOpen(false)}
+                            className="block py-3 text-lg text-ink border-b border-line"
+                        >
+                            {link.text}
+                        </a>
+                    ))}
+                    <a
+                        href={to("/#contact")}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="mt-5 flex items-center justify-center h-12 rounded-lg bg-ink text-paper font-medium"
+                    >
+                        Book a consultation
                     </a>
                 </div>
-                <button onClick={() => setIsMenuOpen(true)} className="lg:hidden active:scale-90 transition">
-                    <MenuIcon className="size-6.5 text-white" />
-                </button>
-            </motion.nav>
-            <div className={`fixed inset-0 z-[100] bg-black/60 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 lg:hidden transition-transform duration-400 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                {navlinks.map((link) => (
-                    <a key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)} className="text-white">
-                        {link.text}
-                    </a>
-                ))}
-                <button onClick={() => setIsMenuOpen(false)} className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-slate-100 hover:bg-slate-200 transition text-black rounded-md flex">
-                    <XIcon />
-                </button>
-            </div>
-        </>
+            )}
+        </header>
     );
 }

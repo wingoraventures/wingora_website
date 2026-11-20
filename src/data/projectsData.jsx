@@ -499,3 +499,26 @@ export const projectsData = [
     ],
 },
 ];
+// One-line summaries used on project listings.
+export const projectSummaries = {
+    1:  "Records doctor-patient conversations, writes SOAP notes, and answers patient follow-up questions.",
+    2:  "A WhatsApp assistant connected to Odoo CRM that answers sales questions and sends alerts.",
+    3:  "Enterprise chatbot API on Azure with PII removal, semantic search, and multilingual support.",
+    4:  "Azure OpenAI fine-tuned on 1,000 invoice layouts to turn scanned invoices into structured data.",
+    5:  "Analyses chatbot logs for session length, token usage, and cost on Azure Functions.",
+    6:  "Creates Freshdesk tickets, schedules meetings, and manages to-dos from plain-language requests.",
+    7:  "Ask a database questions in plain English and get answers as cards you can export to CSV.",
+    8:  "A talking digital avatar with real-time speech and lip-sync, built on Azure.",
+    9:  "IT support bot that raises tickets, tracks leave, and answers policy questions.",
+    10: "Train a chatbot on your own documents and embed it on any site with one line of code.",
+    11: "Track spending and meals by chatting, with daily to yearly summaries.",
+    12: "A 360° clothing viewer with AI-generated virtual fitting.",
+    13: "Predicts children's body measurements from age, height, and weight for garment sizing.",
+    14: "An FAQ bot that answers only from the Swakriti user guide.",
+    15: "Semantic outfit recommendations powered by Gemini embeddings and Pinecone.",
+    16: "Financial data, AI-written analysis, and Peter Lynch classification for Indian listed companies.",
+    17: "iOS app that records consultations, writes SOAP notes, and emails the report to the patient.",
+    18: "Android app for AI virtual try-on with a 360° view of the outfit.",
+    19: "A floating try-on button that works inside Amazon, Flipkart, Myntra, and other shopping apps.",
+    20: "Reads ECG reports, classifies them with Gemini, measures waveform intervals, and writes a PDF summary.",
+};

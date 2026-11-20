@@ -30,11 +30,13 @@ export default function LenisScroll() {
     }, []);
 
     useEffect(() => {
+        const target = location.hash ? document.querySelector(location.hash) : null;
         if (lenisRef.current) {
-            lenisRef.current.scrollTo(0, { immediate: true });
+            lenisRef.current.scrollTo(target ?? 0, { immediate: true, offset: target ? -64 : 0 });
         } else {
             window.scrollTo(0, 0);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.pathname]);
 
     return null;
