@@ -85,11 +85,11 @@ export default function Footer() {
 
                 <nav className="text-[0.95rem]" aria-label="Footer">
                     <ul className="space-y-2.5 text-ink-soft">
-                        <li><a href="/#services" className="hover:text-ink">Services</a></li>
+                        <li><Link to="/#services" className="hover:text-ink">Services</Link></li>
                         <li><Link to="/projects" className="hover:text-ink">Projects</Link></li>
                         <li><Link to="/about" className="hover:text-ink">About</Link></li>
                         <li><Link to="/faq" className="hover:text-ink">FAQ</Link></li>
-                        <li><a href="/#contact" className="hover:text-ink">Contact</a></li>
+                        <li><Link to="/#contact" className="hover:text-ink">Contact</Link></li>
                     </ul>
                 </nav>
 

@@ -33,8 +33,6 @@ export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const { pathname } = useLocation();
-    // On the home page use bare hashes so Lenis scrolls smoothly; elsewhere load the home page first.
-    const to = (href) => (pathname === "/" && href.startsWith("/#") ? href.slice(1) : href);
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 8);
@@ -56,18 +54,18 @@ export default function Navbar() {
 
                 <div className="hidden md:flex items-center gap-8 text-[0.95rem] text-ink-soft">
                     {navlinks.map((link) => (
-                        <a key={link.href} href={to(link.href)} className="hover:text-ink transition-colors">
+                        <Link key={link.href} to={link.href} className="hover:text-ink transition-colors">
                             {link.text}
-                        </a>
+                        </Link>
                     ))}
                 </div>
 
-                <a
-                    href={to("/#contact")}
+                <Link
+                    to="/#contact"
                     className="hidden md:inline-flex items-center h-10 px-4 rounded-lg bg-ink text-paper text-[0.95rem] font-medium hover:bg-wing-deep transition-colors"
                 >
                     Book a consultation
-                </a>
+                </Link>
 
                 <button
                     onClick={() => setIsMenuOpen((open) => !open)}
@@ -82,22 +80,22 @@ export default function Navbar() {
             {isMenuOpen && (
                 <div className="md:hidden border-t border-line px-5 pb-6 pt-2">
                     {navlinks.map((link) => (
-                        <a
+                        <Link
                             key={link.href}
-                            href={to(link.href)}
+                            to={link.href}
                             onClick={() => setIsMenuOpen(false)}
                             className="block py-3 text-lg text-ink border-b border-line"
                         >
                             {link.text}
-                        </a>
+                        </Link>
                     ))}
-                    <a
-                        href={to("/#contact")}
+                    <Link
+                        to="/#contact"
                         onClick={() => setIsMenuOpen(false)}
                         className="mt-5 flex items-center justify-center h-12 rounded-lg bg-ink text-paper font-medium"
                     >
                         Book a consultation
-                    </a>
+                    </Link>
                 </div>
             )}
         </header>

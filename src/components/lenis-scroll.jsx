@@ -29,15 +29,25 @@ export default function LenisScroll() {
         };
     }, []);
 
+    const lastPath = useRef(location.pathname);
+
+    // Runs on every router navigation, including links to the page you're already on
+    // (like the logo on the home page), so those still scroll.
     useEffect(() => {
+        const samePage = lastPath.current === location.pathname;
+        lastPath.current = location.pathname;
         const target = location.hash ? document.querySelector(location.hash) : null;
-        if (lenisRef.current) {
-            lenisRef.current.scrollTo(target ?? 0, { immediate: true, offset: target ? -64 : 0 });
-        } else {
-            window.scrollTo(0, 0);
+        const lenis = lenisRef.current;
+        if (samePage && lenis) {
+            lenis.scrollTo(target ?? 0, { offset: target ? -64 : 0 });
+            return;
         }
+        // New page: jump straight there, then let Lenis re-measure the new page height.
+        const top = target ? target.getBoundingClientRect().top + window.scrollY - 64 : 0;
+        window.scrollTo({ top, behavior: "instant" });
+        lenis?.resize();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location.pathname]);
+    }, [location.key]);
 
     return null;
 }
