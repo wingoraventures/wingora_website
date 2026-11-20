@@ -61,6 +61,23 @@ button {
     100% { opacity: 0; }
 }
 
+/* Hero tiles: each list is duplicated, so moving by half its size loops seamlessly. */
+.drift-up { animation: drift-y 80s linear infinite; }
+.drift-down { animation: drift-y 80s linear infinite reverse; }
+.drift-left { animation: drift-x 60s linear infinite; }
+.drift-pause:hover,
+.drift-pause:focus-within { animation-play-state: paused; }
+
+@keyframes drift-y {
+    from { transform: translateY(0); }
+    to { transform: translateY(-50%); }
+}
+
+@keyframes drift-x {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
 .link-underline {
     text-decoration: underline;
     text-decoration-color: rgb(14 27 51 / 0.25);

@@ -1,51 +1,14 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { Check } from "lucide-react";
-
-// Illustrative examples of the collect, understand, decide, act cycle.
-// They are not client deployments and use no client names.
-const runs = [
-    {
-        channel: "WhatsApp",
-        who: "a supermarket customer",
-        message: "Do you have the 5 kg pack of basmati rice in stock?",
-        steps: [
-            "Understood a product enquiry",
-            "Checked inventory: out of stock",
-            "Replied with the expected restock date",
-            "Logged the enquiry as unmet demand",
-        ],
-        result: "Third request this week, so the item is flagged for reorder.",
-    },
-    {
-        channel: "Business assistant",
-        who: "the store owner",
-        message: "Which products should I reorder before the weekend?",
-        steps: [
-            "Read the last twelve weeks of sales",
-            "Compared demand with current stock",
-            "Estimated weekend demand by product",
-        ],
-        result: "Reorder list ready, with the reason for each item.",
-    },
-    {
-        channel: "Instagram",
-        who: "a property enquiry",
-        message: "Looking for a 3BHK near Kakkanad, budget under 90 lakh.",
-        steps: [
-            "Captured the requirements: 3BHK, Kakkanad, budget",
-            "Marked it as a likely buyer for review",
-            "Handed the lead to a sales rep with the full conversation",
-            "Scheduled a follow-up reminder",
-        ],
-        result: "The sales rep picks up with full context.",
-    },
-];
 
 const STEP_MS = 900;
 
-export default function AgentTrace() {
+export default function AgentTrace({ runs, title = "Example workflow" }) {
     const reduceMotion = useReducedMotion();
+    const ref = useRef(null);
+    // Start the sequence only once the panel scrolls into view.
+    const inView = useInView(ref, { once: true, margin: "-80px" });
     const [runIndex, setRunIndex] = useState(0);
     const [shown, setShown] = useState(0);
     const run = runs[runIndex];
@@ -56,6 +19,7 @@ export default function AgentTrace() {
             setShown(total);
             return;
         }
+        if (!inView) return;
         if (shown < total) {
             const t = setTimeout(() => setShown((n) => n + 1), shown === 0 ? 1200 : STEP_MS);
             return () => clearTimeout(t);
@@ -65,14 +29,14 @@ export default function AgentTrace() {
             setRunIndex((i) => (i + 1) % runs.length);
         }, 4200);
         return () => clearTimeout(t);
-    }, [shown, total, reduceMotion]);
+    }, [shown, total, reduceMotion, inView, runs.length]);
 
     const working = shown < total;
 
     return (
-        <div className="relative rounded-2xl border border-line bg-white shadow-[0_1px_0_rgb(14_27_51/0.04),0_24px_48px_-24px_rgb(14_27_51/0.18)]">
+        <div ref={ref} className="relative rounded-2xl border border-line bg-white shadow-[0_1px_0_rgb(14_27_51/0.04),0_24px_48px_-24px_rgb(14_27_51/0.18)]">
             <div className="flex items-center justify-between border-b border-line px-5 py-3.5 text-sm">
-                <span className="font-medium text-ink">Example workflow</span>
+                <span className="font-medium text-ink">{title}</span>
                 <span className="flex items-center gap-2 text-ink-soft">
                     <span className="relative flex size-2">
                         {working && !reduceMotion && (
