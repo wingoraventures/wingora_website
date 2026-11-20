@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { MenuIcon, XIcon } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
+// Paths starting with "/#" are sections on the home page; the rest are pages.
 const navlinks = [
     { href: "/#services", text: "Services" },
-    { href: "/#work", text: "Work" },
-    { href: "/#process", text: "Process" },
+    { href: "/projects", text: "Projects" },
+    { href: "/about", text: "About" },
+    { href: "/faq", text: "FAQ" },
     { href: "/#contact", text: "Contact" },
 ];
 
@@ -32,7 +34,7 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const { pathname } = useLocation();
     // On the home page use bare hashes so Lenis scrolls smoothly; elsewhere load the home page first.
-    const to = (href) => (pathname === "/" ? href.slice(1) : href);
+    const to = (href) => (pathname === "/" && href.startsWith("/#") ? href.slice(1) : href);
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 8);

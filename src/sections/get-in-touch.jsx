@@ -64,8 +64,8 @@ export default function GetInTouch() {
             <div className="grid gap-14 lg:grid-cols-[minmax(0,24rem)_1fr] lg:gap-20">
                 <div>
                     <SectionTitle
-                        title="Tell us what's slowing you down"
-                        description="Describe the problem in your own words. We'll reply within one working day to set up a free consultation."
+                        title="Tell us about your business"
+                        description="Describe how your business runs today and where you want to improve. We'll get back to you to understand your process and find where data, customer automation, or custom AI can help."
                     />
                     <dl className="mt-10 space-y-5 text-[0.95rem]">
                         <div>
@@ -86,7 +86,7 @@ export default function GetInTouch() {
                         </div>
                         <div>
                             <dt className="text-ink-soft">Based in</dt>
-                            <dd className="mt-0.5 text-ink">Kerala, India. Working with clients worldwide.</dd>
+                            <dd className="mt-0.5 text-ink">India. We can discuss projects outside India too.</dd>
                         </div>
                     </dl>
                 </div>
@@ -123,7 +123,7 @@ export default function GetInTouch() {
                         <textarea
                             name="message"
                             rows={5}
-                            placeholder="For example: we miss WhatsApp enquiries after 7 pm and lose bookings."
+                            placeholder="For example: our sales data is in Excel and WhatsApp enquiries go unanswered after hours."
                             value={formData.message}
                             onChange={handleChange}
                             className={`${fieldClass} resize-none`}
@@ -140,7 +140,7 @@ export default function GetInTouch() {
                         </button>
                         {submitStatus === "success" && (
                             <p className="flex items-center gap-2 text-[0.95rem] text-emerald-700">
-                                <CheckCircle2 className="size-5" /> Message sent. We'll reply within one working day.
+                                <CheckCircle2 className="size-5" /> Message sent. We'll get back to you soon.
                             </p>
                         )}
                         {submitStatus === "missing" && (

@@ -2,43 +2,43 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Check } from "lucide-react";
 
-// Each run mirrors a system we have shipped: the WhatsApp booking agent,
-// the Odoo sales assistant, and the invoice extraction API.
+// Illustrative examples of the collect, understand, decide, act cycle.
+// They are not client deployments and use no client names.
 const runs = [
     {
         channel: "WhatsApp",
-        who: "Patient, Aster Skin Clinic",
-        message: "Hi, can I get an appointment with Dr. Meera on Thursday evening?",
+        who: "a supermarket customer",
+        message: "Do you have the 5 kg pack of basmati rice in stock?",
         steps: [
-            "Recognised a booking request",
-            "Found an open slot: Thursday, 5:30 pm",
-            "Booked it and sent a confirmation",
-            "Added the patient to the clinic CRM",
+            "Understood a product enquiry",
+            "Checked inventory: out of stock",
+            "Replied with the expected restock date",
+            "Logged the enquiry as unmet demand",
         ],
-        result: "Booked without anyone at the front desk picking up the phone.",
+        result: "Third request this week, so the item is flagged for reorder.",
     },
     {
-        channel: "WhatsApp",
-        who: "Owner, Kochi retail store",
-        message: "What were yesterday's sales, and which items are running low?",
+        channel: "Business assistant",
+        who: "the store owner",
+        message: "Which products should I reorder before the weekend?",
         steps: [
-            "Queried yesterday's orders in Odoo",
-            "Compared stock against reorder levels",
-            "Replied with a summary and reorder buttons",
+            "Read the last twelve weeks of sales",
+            "Compared demand with current stock",
+            "Estimated weekend demand by product",
         ],
-        result: "Sales report and low-stock list delivered in chat.",
+        result: "Reorder list ready, with the reason for each item.",
     },
     {
-        channel: "Email inbox",
-        who: "Accounts team",
-        message: "invoice_2291.pdf from Malabar Traders",
+        channel: "Instagram",
+        who: "a property enquiry",
+        message: "Looking for a 3BHK near Kakkanad, budget under 90 lakh.",
         steps: [
-            "Read the scanned PDF",
-            "Extracted vendor, line items, tax and totals",
-            "Matched the purchase order",
-            "Posted the entry to accounting",
+            "Captured the requirements: 3BHK, Kakkanad, budget",
+            "Marked it as a likely buyer for review",
+            "Handed the lead to a sales rep with the full conversation",
+            "Scheduled a follow-up reminder",
         ],
-        result: "Invoice entered with no manual typing.",
+        result: "The sales rep picks up with full context.",
     },
 ];
 
@@ -72,7 +72,7 @@ export default function AgentTrace() {
     return (
         <div className="relative rounded-2xl border border-line bg-white shadow-[0_1px_0_rgb(14_27_51/0.04),0_24px_48px_-24px_rgb(14_27_51/0.18)]">
             <div className="flex items-center justify-between border-b border-line px-5 py-3.5 text-sm">
-                <span className="font-medium text-ink">Wingora agent</span>
+                <span className="font-medium text-ink">Example workflow</span>
                 <span className="flex items-center gap-2 text-ink-soft">
                     <span className="relative flex size-2">
                         {working && !reduceMotion && (

@@ -1,7 +1,8 @@
-// projectsData.js — shared across ProjectsPage and ProjectDetailPage
-// Import this file in both pages: import { projectsData } from "../data/projectsData";
+// Projects from Ajay CK's AI engineering experience. They show technical
+// background and are not presented as Wingora client engagements.
+// Swakriti, virtual try-on and Dontry entries were superseded by case studies in caseStudies.js.
 
-export const projectsData = [
+const legacyProjects = [
     {
         id: 1,
         name: "Healthcare Voice Analysis AI Agent",
@@ -500,7 +501,7 @@ export const projectsData = [
 },
 ];
 // One-line summaries used on project listings.
-export const projectSummaries = {
+const projectSummaries = {
     1:  "Records doctor-patient conversations, writes SOAP notes, and answers patient follow-up questions.",
     2:  "A WhatsApp assistant connected to Odoo CRM that answers sales questions and sends alerts.",
     3:  "Enterprise chatbot API on Azure with PII removal, semantic search, and multilingual support.",
@@ -522,3 +523,9 @@ export const projectSummaries = {
     19: "A floating try-on button that works inside Amazon, Flipkart, Myntra, and other shopping apps.",
     20: "Reads ECG reports, classifies them with Gemini, measures waveform intervals, and writes a PDF summary.",
 };
+
+const superseded = [12, 14, 15, 18, 19];
+
+export const experienceProjects = legacyProjects
+    .filter((p) => !superseded.includes(p.id))
+    .map((p) => ({ ...p, id: String(p.id), kind: "experience", summary: projectSummaries[p.id] }));

@@ -2,39 +2,43 @@ import SectionTitle from "../components/section-title";
 
 const industries = [
     {
-        title: "Clinics and healthcare",
-        description: "Appointment booking, patient follow-ups, and consultation notes written for the doctor.",
+        title: "Retail and supermarkets",
+        solutions: "Sales and inventory intelligence, demand forecasting, purchase analysis, repeat customer engagement, WhatsApp automation, and product recommendations.",
+    },
+    {
+        title: "E-commerce and D2C",
+        solutions: "Customer segmentation, product recommendations, customer journey analytics, personalised communication, retention workflows, and enquiry automation.",
+    },
+    {
+        title: "Restaurants and food businesses",
+        solutions: "Sales and order analysis, retention intelligence, feedback analysis, repeat customer engagement, demand forecasting, and communication automation.",
     },
     {
         title: "Real estate",
-        description: "Lead qualification, property questions answered at any hour, and follow-ups that don't slip.",
+        solutions: "Lead qualification, enquiry management, automated follow-ups, CRM integration, sales pipeline analytics, and communication history.",
     },
     {
-        title: "E-commerce and retail",
-        description: "Product recommendations, virtual try-on, order support, and stock alerts.",
+        title: "Healthcare and clinics",
+        solutions: "Appointment automation, patient enquiry management, operational analytics, administrative workflow automation, and knowledge-based assistants.",
     },
     {
-        title: "Small businesses",
-        description: "Orders, inventory, and customer messages handled for teams of one to five people.",
-    },
-    {
-        title: "Coaches, consultants, and startups",
-        description: "Lead capture, onboarding, and content workflows that scale without hiring.",
+        title: "Manufacturing and distribution",
+        solutions: "Sales and inventory analytics, demand planning, ERP data intelligence, automated reporting, document processing, and workflow automation.",
     },
 ];
 
 export default function Industries() {
     return (
-        <section className="mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-32">
+        <section id="industries" className="mx-auto max-w-6xl px-5 pb-24 md:px-8 md:pb-32">
             <SectionTitle
-                title="Who we work with"
-                description="We do our best work with teams that are busy enough to feel the cost of manual work, and small enough to move quickly."
+                title="Industries we focus on"
+                description="Organisations that already generate useful business and customer data but need better systems to understand and use it. These are the areas we focus on and what we can build for them."
             />
             <dl className="mt-14 grid gap-x-16 sm:grid-cols-2 lg:grid-cols-3">
                 {industries.map((item) => (
                     <div key={item.title} className="border-t border-line py-7">
                         <dt className="text-lg font-semibold tracking-tight text-ink">{item.title}</dt>
-                        <dd className="mt-2 leading-relaxed text-ink-soft">{item.description}</dd>
+                        <dd className="mt-2 leading-relaxed text-ink-soft">{item.solutions}</dd>
                     </div>
                 ))}
             </dl>
