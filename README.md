@@ -46,10 +46,18 @@ npm run dev
 - `/` — marketing homepage
 - `/projects` — project listings
 - `/projects/:id` — project details
+- `/about` — company and team
+- `/faq` — frequently asked questions
 - `/admin` — admin login
 - `/admin/dashboard` — admin dashboard
 
 The admin dashboard expects Supabase tables named `categories`, `sub_categories`, `products`, and `product_details`, plus a Storage bucket named `ammaira-products`. The contact and newsletter forms write to `contact_submissions` and `subscribed_users`.
+
+## Where contact leads are saved
+
+Every contact form submission is inserted into the `contact_submissions` table of the Supabase project set by `VITE_SUPABASE_URL`, with the columns `name`, `email`, `phone`, `business_type`, `message`, and `submitted_at`. View leads in the Supabase dashboard under Table Editor, `contact_submissions`.
+
+If `VITE_SUPABASE_URL` or `VITE_SUPABASE_ANON_KEY` is missing at build time, nothing is saved and visitors are asked to email instead. Set both variables in the Vercel project for every environment that serves the site, then redeploy. The table needs a row-level security policy that allows the `anon` role to insert.
 
 ## Email functions
 

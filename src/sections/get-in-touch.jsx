@@ -79,8 +79,8 @@ export default function GetInTouch() {
                         <div>
                             <dt className="text-ink-soft">Phone and WhatsApp</dt>
                             <dd className="mt-0.5">
-                                <a href="tel:+916238912027" className="text-ink link-underline">
-                                    +91 62389 12027
+                                <a href="tel:+919544643754" className="text-ink link-underline">
+                                    +91 95446 43754
                                 </a>
                             </dd>
                         </div>
