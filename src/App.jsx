@@ -5,6 +5,7 @@ import LenisScroll from "./components/lenis-scroll";
 import Navbar from "./components/navbar";
 import PageMeta from "./components/page-meta";
 import HeroSection from "./sections/hero-section";
+import TechStrip from "./sections/tech-strip";
 import CoreAreas from "./sections/core-areas";
 import Process from "./sections/process";
 import Services from "./sections/services";
@@ -33,6 +34,7 @@ function HomePage() {
             <Navbar />
             <main>
                 <HeroSection />
+                <TechStrip />
                 <CoreAreas />
                 <Process />
                 <Services />
