@@ -33,7 +33,6 @@ const movedTo = {
     12: "virtual-try-on-platform",
     14: "swakriti-recommendations",
     15: "swakriti-recommendations",
-    18: "virtual-try-on-platform",
     19: "dontry",
 };
 
@@ -128,6 +127,9 @@ export default function ProjectDetailPage() {
                             <p className="mb-12 max-w-[65ch] rounded-xl border border-line bg-white px-5 py-4 leading-relaxed text-ink">
                                 {note}
                             </p>
+                        )}
+                        {project.image && (
+                            <img src={project.image} alt={`${project.name} screens`} className="mb-14 w-full rounded-2xl border border-line" />
                         )}
                         {isCaseStudy ? <CaseStudyBody project={project} /> : <ExperienceBody project={project} />}
                     </div>

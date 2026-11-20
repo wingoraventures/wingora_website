@@ -105,6 +105,7 @@ export const caseStudies = [
             "Communication between the app and backend services",
         ],
         relevance: "Shows end-to-end delivery of an AI feature as a consumer mobile product.",
+        image: "/work/dontry.jpg",
         tech: ["Android", "Kotlin", "Google Play Billing", "AI backend"],
     },
     {

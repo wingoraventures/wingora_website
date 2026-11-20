@@ -24,9 +24,14 @@ export default function SelectedWork() {
                     title="Projects"
                     description="Recommendation systems, multimodal AI, and decision-support tools our team has designed and built. Each one is labelled with its current status."
                 />
-                <Link to="/projects" className="font-medium text-ink link-underline">
-                    View all projects
-                </Link>
+                <div className="flex flex-wrap gap-x-6 gap-y-2">
+                    <Link to="/projects" className="font-medium text-ink link-underline">
+                        View all projects
+                    </Link>
+                    <Link to="/projects#beyond-ai" className="font-medium text-ink link-underline">
+                        Websites and apps we've built
+                    </Link>
+                </div>
             </div>
 
             <div className="mt-14 grid border-l border-t border-line bg-white md:grid-cols-2">

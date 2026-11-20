@@ -5,6 +5,7 @@ import Footer from "../components/footer";
 import GridField from "../components/grid-field";
 import PageMeta from "../components/page-meta";
 import { StatusTag } from "../sections/selected-work";
+import BeyondAI from "../sections/beyond-ai";
 import { caseStudies, experienceProjects } from "../data/projects";
 
 function ProjectRow({ project }) {
@@ -69,11 +70,12 @@ export default function ProjectsPage() {
                         and are not presented as Wingora client engagements.
                     </p>
                     <ul className="mt-6 border-t border-line">
-                        {experienceProjects.map((p) => (
+                        {experienceProjects.filter((p) => p.category !== "Mobile App").map((p) => (
                             <ProjectRow key={p.id} project={p} />
                         ))}
                     </ul>
                 </section>
+                <BeyondAI />
             </main>
             <Footer />
         </>

@@ -1,6 +1,6 @@
 // Projects from Ajay CK's AI engineering experience. They show technical
 // background and are not presented as Wingora client engagements.
-// Swakriti, virtual try-on and Dontry entries were superseded by case studies in caseStudies.js.
+// Swakriti recommendation, the 360° try-on viewer and Dontry were superseded by case studies in caseStudies.js.
 
 const legacyProjects = [
     {
@@ -524,7 +524,7 @@ const projectSummaries = {
     20: "Reads ECG reports, classifies them with Gemini, measures waveform intervals, and writes a PDF summary.",
 };
 
-const superseded = [12, 14, 15, 18, 19];
+const superseded = [12, 14, 15, 19];
 
 export const experienceProjects = legacyProjects
     .filter((p) => !superseded.includes(p.id))
