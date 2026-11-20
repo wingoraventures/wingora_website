@@ -74,25 +74,17 @@ export default function AboutPage() {
 
                 <section className="mx-auto max-w-6xl px-5 py-24 md:px-8">
                     <h2 className="text-3xl font-semibold tracking-[-0.025em] text-ink md:text-[2.75rem]">Team</h2>
-                    <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-[1.4fr_1fr]">
-                        <article className="bg-white p-7 md:p-10 lg:row-span-2">
-                            <h3 className="text-2xl font-semibold tracking-tight text-ink">{team[0].name}</h3>
-                            <p className="mt-1 text-ink-soft">{team[0].role}</p>
-                            <p className="mt-5 leading-relaxed text-ink">{team[0].bio}</p>
-                            <p className="mt-5 leading-relaxed text-ink-soft">
-                                His approach is to understand the business problem before deciding which technology to use.
-                            </p>
-                            <ul className="mt-6 flex flex-wrap gap-1.5">
-                                {team[0].skills.map((s) => (
-                                    <li key={s} className="rounded-md bg-wing-tint px-2.5 py-1 text-sm text-ink">{s}</li>
-                                ))}
-                            </ul>
-                        </article>
-                        {team.slice(1).map((person) => (
+                    <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-2">
+                        {team.map((person) => (
                             <article key={person.name} className="bg-white p-7 md:p-10">
-                                <h3 className="text-xl font-semibold tracking-tight text-ink">{person.name}</h3>
+                                <h3 className="text-2xl font-semibold tracking-tight text-ink">{person.name}</h3>
                                 <p className="mt-1 text-ink-soft">{person.role}</p>
-                                <p className="mt-4 leading-relaxed text-ink">{person.bio}</p>
+                                <p className="mt-5 leading-relaxed text-ink">{person.bio}</p>
+                                <ul className="mt-6 flex flex-wrap gap-1.5">
+                                    {person.skills.map((s) => (
+                                        <li key={s} className="rounded-md bg-wing-tint px-2.5 py-1 text-sm text-ink">{s}</li>
+                                    ))}
+                                </ul>
                             </article>
                         ))}
                     </div>

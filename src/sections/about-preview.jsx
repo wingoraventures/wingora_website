@@ -24,7 +24,7 @@ export default function AboutPreview() {
                             description="We don't sell AI because it's trending. We look at how your business operates, what information it generates, and where technology can create measurable value."
                         />
                         <p className="mt-8 text-[0.95rem] text-ink-soft">
-                            Founded by {team[0].name}, with {team[1].name} leading marketing and business development.{" "}
+                            Founded by {team[0].name}, with {team[1].name} leading sales and marketing.{" "}
                             <Link to="/about" className="text-ink link-underline">
                                 About the company and team
                             </Link>

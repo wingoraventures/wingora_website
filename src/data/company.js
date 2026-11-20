@@ -15,13 +15,15 @@ export const team = [
     },
     {
         name: "Mubarris",
-        role: "Marketing and business development",
-        bio: "Identifies business opportunities, works with clients to understand their requirements, and builds relationships with potential customers.",
-    },
-    {
-        name: "Mihras",
-        role: "Digital marketing support (freelance)",
-        bio: "Supports marketing activities and related client requirements.",
+        role: "Sales and marketing lead",
+        bio: "Leads sales and marketing at Wingora. He identifies business opportunities, works with clients to understand their requirements, and builds relationships with potential customers.",
+        skills: [
+            "Sales",
+            "Marketing",
+            "Business development",
+            "Client relationships",
+            "Requirement gathering",
+        ],
     },
 ];
 
