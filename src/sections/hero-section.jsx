@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import GridField from "../components/grid-field";
+import DataGrid from "../components/data-grid";
 import DataConstellation from "../components/data-constellation";
 
 const rise = (delay) => ({
@@ -12,7 +12,7 @@ const rise = (delay) => ({
 export default function HeroSection() {
     return (
         <section id="home" className="relative -mt-16 overflow-hidden pt-16">
-            <GridField />
+            <DataGrid />
 
             <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 pb-24 pt-16 md:px-8 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:gap-16 lg:pb-32">
                 <div>
