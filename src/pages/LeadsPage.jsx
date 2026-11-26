@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { LogOut, MessageCircle, Phone, Plus, Search, Trash2, X } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { useEffect, useMemo, useState } from "react";
+import { Download, LogOut, MessageCircle, Phone, Plus, Search, Trash2, X } from "lucide-react";
+import { LEADS_LOGIN, isSignedIn, leadsToCsv, loadLeads, newLead, saveLeads, setSignedIn } from "../data/leadsStore";
 import { Logo } from "../components/navbar";
 
 const STATUSES = [
@@ -27,19 +27,19 @@ function formatDate(iso) {
     return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
-function SignIn() {
+function SignIn({ onSignIn }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [busy, setBusy] = useState(false);
 
-    const submit = async (e) => {
+    const submit = (e) => {
         e.preventDefault();
-        setBusy(true);
-        setError("");
-        const { error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-        if (err) setError("Email or password is incorrect.");
-        setBusy(false);
+        if (email.trim().toLowerCase() === LEADS_LOGIN.email && password === LEADS_LOGIN.password) {
+            setSignedIn(true);
+            onSignIn();
+        } else {
+            setError("Email or password is incorrect.");
+        }
     };
 
     return (
@@ -55,9 +55,7 @@ function SignIn() {
                 <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className={`${field} mt-1.5`} required />
             </label>
             {error && <p className="mt-3 text-sm text-ascent">{error}</p>}
-            <button disabled={busy} className="mt-6 h-12 w-full rounded-lg bg-wing font-medium text-white hover:bg-wing-deep disabled:opacity-60">
-                {busy ? "Signing in…" : "Sign in"}
-            </button>
+            <button className="mt-6 h-12 w-full rounded-lg bg-wing font-medium text-white hover:bg-wing-deep">Sign in</button>
         </form>
     );
 }
@@ -65,27 +63,15 @@ function SignIn() {
 function AddLead({ onAdded, onClose }) {
     const [form, setForm] = useState({ name: "", whatsapp: "", status: STATUSES[0].value, notes: "" });
     const [error, setError] = useState("");
-    const [busy, setBusy] = useState(false);
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-    const submit = async (e) => {
+    const submit = (e) => {
         e.preventDefault();
         if (!form.name.trim() || !form.whatsapp.trim()) {
             setError("Add a name and a WhatsApp number.");
             return;
         }
-        setBusy(true);
-        const { data, error: err } = await supabase
-            .from("leads")
-            .insert([{ ...form, name: form.name.trim(), whatsapp: form.whatsapp.trim() }])
-            .select()
-            .single();
-        setBusy(false);
-        if (err) {
-            setError("Lead not saved. Check your connection and try again.");
-            return;
-        }
-        onAdded(data);
+        onAdded(newLead({ ...form, name: form.name.trim(), whatsapp: form.whatsapp.trim() }));
     };
 
     return (
@@ -107,8 +93,8 @@ function AddLead({ onAdded, onClose }) {
                 <textarea placeholder="Notes (optional)" rows={3} value={form.notes} onChange={set("notes")} className={`${field} resize-none sm:col-span-2`} />
             </div>
             {error && <p className="mt-3 text-sm text-ascent">{error}</p>}
-            <button disabled={busy} className="mt-4 h-12 w-full rounded-lg bg-wing font-medium text-white hover:bg-wing-deep disabled:opacity-60 sm:w-auto sm:px-6">
-                {busy ? "Saving…" : "Save lead"}
+            <button className="mt-4 h-12 w-full rounded-lg bg-wing font-medium text-white hover:bg-wing-deep sm:w-auto sm:px-6">
+                Save lead
             </button>
         </form>
     );
@@ -120,24 +106,14 @@ function LeadCard({ lead, onChange, onDelete }) {
 
     useEffect(() => setNotes(lead.notes), [lead.notes]);
 
-    const update = async (patch, label) => {
-        setSaving(label);
-        const previous = { ...lead };
-        onChange({ ...lead, ...patch });
-        const { error } = await supabase.from("leads").update(patch).eq("id", lead.id);
-        if (error) {
-            onChange(previous);
-            setSaving("Not saved. Try again.");
-            return;
-        }
-        setSaving("Saved");
-        setTimeout(() => setSaving(""), 1500);
+    const update = (patch) => {
+        const ok = onChange({ ...lead, ...patch, updated_at: new Date().toISOString() });
+        setSaving(ok ? "Saved" : "Not saved: this browser's storage is full or blocked.");
+        setTimeout(() => setSaving(""), ok ? 1500 : 4000);
     };
 
-    const remove = async () => {
-        if (!window.confirm(`Delete ${lead.name}? This can't be undone.`)) return;
-        const { error } = await supabase.from("leads").delete().eq("id", lead.id);
-        if (!error) onDelete(lead.id);
+    const remove = () => {
+        if (window.confirm(`Delete ${lead.name}? This can't be undone.`)) onDelete(lead.id);
     };
 
     return (
@@ -161,7 +137,7 @@ function LeadCard({ lead, onChange, onDelete }) {
 
             <select
                 value={lead.status}
-                onChange={(e) => update({ status: e.target.value }, "Saving…")}
+                onChange={(e) => update({ status: e.target.value })}
                 aria-label={`Status for ${lead.name}`}
                 className={`mt-4 h-11 w-full rounded-lg border px-3 text-base font-medium outline-none focus:ring-3 focus:ring-wing/15 ${statusStyle(lead.status)}`}
             >
@@ -173,7 +149,7 @@ function LeadCard({ lead, onChange, onDelete }) {
             <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                onBlur={() => notes !== lead.notes && update({ notes }, "Saving…")}
+                onBlur={() => notes !== lead.notes && update({ notes })}
                 placeholder="Add a note"
                 rows={2}
                 aria-label={`Notes for ${lead.name}`}
@@ -193,30 +169,33 @@ function LeadCard({ lead, onChange, onDelete }) {
     );
 }
 
-function Leads({ session }) {
-    const [leads, setLeads] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+function Leads() {
+    const [leads, setLeads] = useState(loadLeads);
     const [adding, setAdding] = useState(false);
     const [filter, setFilter] = useState("All");
     const [query, setQuery] = useState("");
 
-    const load = useCallback(async () => {
-        const { data, error: err } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
-        if (err) setError("Couldn't load leads. Refresh the page to try again.");
-        else {
-            setLeads(data);
-            setError("");
-        }
-        setLoading(false);
-    }, []);
+    // Every change is written straight to localStorage; returns false if it couldn't be saved.
+    const commit = (next) => {
+        setLeads(next);
+        return saveLeads(next);
+    };
 
     useEffect(() => {
-        load();
-        // Pick up changes made by teammates when coming back to the tab.
-        window.addEventListener("focus", load);
-        return () => window.removeEventListener("focus", load);
-    }, [load]);
+        // Stay in sync if the page is open in another tab of the same browser.
+        const onStorage = () => setLeads(loadLeads());
+        window.addEventListener("storage", onStorage);
+        return () => window.removeEventListener("storage", onStorage);
+    }, []);
+
+    const downloadCsv = () => {
+        const blob = new Blob([leadsToCsv(leads)], { type: "text/csv" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `wingora-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    };
 
     const counts = useMemo(() => {
         const c = { All: leads.length };
@@ -230,7 +209,7 @@ function Leads({ session }) {
         return !q || l.name.toLowerCase().includes(q) || l.whatsapp.includes(q) || l.notes.toLowerCase().includes(q);
     });
 
-    const replace = (lead) => setLeads((ls) => ls.map((l) => (l.id === lead.id ? lead : l)));
+    const replace = (lead) => commit(leads.map((l) => (l.id === lead.id ? lead : l)));
 
     return (
         <>
@@ -251,7 +230,7 @@ function Leads({ session }) {
                     <AddLead
                         onClose={() => setAdding(false)}
                         onAdded={(lead) => {
-                            setLeads((ls) => [lead, ...ls]);
+                            commit([lead, ...leads]);
                             setAdding(false);
                         }}
                     />
@@ -278,30 +257,30 @@ function Leads({ session }) {
                 ))}
             </div>
 
-            {error && <p className="mt-6 text-ascent">{error}</p>}
-            {loading ? (
-                <p className="mt-10 text-center text-ink-soft">Loading leads…</p>
-            ) : visible.length === 0 ? (
+            {visible.length === 0 ? (
                 <div className="mt-10 rounded-2xl border border-dashed border-line p-8 text-center text-ink-soft">
                     {leads.length === 0 ? "No leads yet. Add your first one." : "No leads match this filter."}
                 </div>
             ) : (
                 <ul className="mt-5 grid gap-3 lg:grid-cols-2">
                     {visible.map((lead) => (
-                        <LeadCard key={lead.id} lead={lead} onChange={replace} onDelete={(id) => setLeads((ls) => ls.filter((l) => l.id !== id))} />
+                        <LeadCard key={lead.id} lead={lead} onChange={replace} onDelete={(id) => commit(leads.filter((l) => l.id !== id))} />
                     ))}
                 </ul>
             )}
 
-            <p className="mt-10 text-center text-sm text-ink-soft">
-                Signed in as {session.user.email}
-            </p>
+            <div className="mt-10 flex flex-col items-center gap-3 text-center text-sm text-ink-soft">
+                <button onClick={downloadCsv} disabled={!leads.length} className="flex h-10 items-center gap-1.5 rounded-lg border border-line bg-white px-4 font-medium text-ink hover:border-ink/30 disabled:opacity-50">
+                    <Download className="size-4" /> Download CSV backup
+                </button>
+                <p className="max-w-sm">Leads are saved in this browser only. Download a backup now and then.</p>
+            </div>
         </>
     );
 }
 
 export default function LeadsPage() {
-    const [session, setSession] = useState(undefined);
+    const [signedIn, setSignedInState] = useState(isSignedIn);
 
     useEffect(() => {
         document.title = "Leads | Wingora Ventures";
@@ -310,13 +289,7 @@ export default function LeadsPage() {
         robots.name = "robots";
         robots.content = "noindex, nofollow";
         document.head.appendChild(robots);
-        if (!supabase) return () => robots.remove();
-        supabase.auth.getSession().then(({ data }) => setSession(data.session));
-        const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
-        return () => {
-            robots.remove();
-            sub.subscription.unsubscribe();
-        };
+        return () => robots.remove();
     }, []);
 
     return (
@@ -324,23 +297,19 @@ export default function LeadsPage() {
             <header className="border-b border-line bg-white">
                 <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
                     <Logo />
-                    {session && (
-                        <button onClick={() => supabase.auth.signOut()} className="flex items-center gap-1.5 text-sm text-ink-soft hover:text-ink">
+                    {signedIn && (
+                        <button
+                            onClick={() => {
+                                setSignedIn(false);
+                                setSignedInState(false);
+                            }} className="flex items-center gap-1.5 text-sm text-ink-soft hover:text-ink">
                             <LogOut className="size-4" /> Sign out
                         </button>
                     )}
                 </div>
             </header>
             <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-                {!supabase ? (
-                    <p className="mt-16 text-center text-ink-soft">
-                        The leads database isn't connected. Add the Supabase environment variables and redeploy.
-                    </p>
-                ) : session === undefined ? null : session ? (
-                    <Leads session={session} />
-                ) : (
-                    <SignIn />
-                )}
+                {signedIn ? <Leads /> : <SignIn onSignIn={() => setSignedInState(true)} />}
             </main>
         </div>
     );
