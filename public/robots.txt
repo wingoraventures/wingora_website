@@ -1,4 +1,6 @@
 User-agent: *
 Disallow: /admin
+Disallow: /leads
+Disallow: /lead-management
 
 Sitemap: https://www.wingoraventures.com/sitemap.xml

@@ -23,6 +23,7 @@ import FaqPage from './pages/FaqPage'
 // Admin screens load on demand so the public site never pulls in their Supabase client.
 const Login = lazy(() => import('./admin/Login'))
 const Dashboard = lazy(() => import('./admin/Dashboard'))
+const LeadsPage = lazy(() => import('./pages/LeadsPage'))
 
 function HomePage() {
     return (
@@ -60,6 +61,8 @@ export default function App() {
                 <Route path="/projects/:id" element={<ProjectDetailPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/faq" element={<FaqPage />} />
+                <Route path="/leads" element={<Suspense fallback={null}><LeadsPage /></Suspense>} />
+                <Route path="/lead-management" element={<Suspense fallback={null}><LeadsPage /></Suspense>} />
             </Routes>
         </>
     )
